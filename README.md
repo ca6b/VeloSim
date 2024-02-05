@@ -9,11 +9,10 @@ https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_N
 Pour se connecter, choisir un des services / caractéristique suivants;
 
 # UUIDS
-Fitness Machine Service (FTMS): 00001826-0000-1000-8000-00805f9b34fb
-Cycling Power Measurement: 00002ad2-0000-1000-8000-00805f9b34fb
-
-Heart Rate Service: 0000180d-0000-1000-8000-00805f9b34fb
-Heart Rate Measurement: "0002a37-0000-1000-8000-00805f9b34fb
+- Fitness Machine Service (FTMS): 00001826-0000-1000-8000-00805f9b34fb
+- Cycling Power Measurement: 00002ad2-0000-1000-8000-00805f9b34fb
+- Heart Rate Service: 0000180d-0000-1000-8000-00805f9b34fb
+- Heart Rate Measurement: 00002a37-0000-1000-8000-00805f9b34fb
 
 ## Screenshots
 
