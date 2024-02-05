@@ -3,7 +3,7 @@
 #
 
 # Add source to this project's executable.
-add_executable (VeloSim "VeloSim.cpp" "VeloSim.h" "utils/utils.cpp")
+add_executable (VeloSim "VeloSim.cpp" "VeloSim.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET VeloSim PROPERTY CXX_STANDARD 20)
