@@ -1,7 +1,11 @@
 # VeloSim
 
-Simulateur de route pour indoor trainer construit avec SimpleBLE (Windows) https://github.com/OpenBluetoothToolbox/SimpleBLE
+Simulateur de route pour indoor trainer construit avec SimpleBLE (Windows)(https://github.com/OpenBluetoothToolbox/SimpleBLE)
 
-![Screenshot](power_capture.PNG)
+Documentation SimpleBLE: [https://simpleble.readthedocs.io/en/latest/simpleble/tutorial.html](https://simpleble.readthedocs.io/en/latest/simpleble/tutorial.html)
 
-![Screenshot](heartrate_capture.PNG)
+## Screenshots
+
+![Power Capture](power_capture.PNG)
+
+![Heart Rate Capture](heartrate_capture.PNG)
