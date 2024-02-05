@@ -19,4 +19,16 @@ void HeartRate::read_heart_rate_measurement(const SimpleBLE::ByteArray& bytes)
     //todo: changer selon format flag
     uint8_t heartRateValue = bytes[1];
     std::cout << "Heart Rate Value: " << static_cast<int>(heartRateValue) << " bpm" << std::endl;
+
+    if (energy_expended_status && bytes.size() >= 4) {
+        uint16_t energy_expended_value = (bytes[2] << 8) | bytes[3];
+        std::cout << "Energy Expended: " << energy_expended_value << " Joules" << std::endl;
+    }
+
+    if (rr_interval_present && bytes.size() >= 6) {
+        uint16_t rr_interval_value = (bytes[4] << 8) | bytes[5];
+        std::cout << "RR-Interval: " << rr_interval_value << " milliseconds" << std::endl;
+    }
+
+    std::cout << std::endl;
 }
