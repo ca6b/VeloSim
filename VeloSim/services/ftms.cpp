@@ -4,40 +4,59 @@
 #include "ftms.hpp"
 #include <iomanip>
 
+
 void FTMS::read_indoor_bike_data(const SimpleBLE::ByteArray& bytes) {
 
-    uint8_t flags = bytes[0];
-    std::cout << "Flags: 0x" << std::hex << std::setfill('0') << std::setw(2) << (uint32_t)flags << std::dec << std::endl;
+    std::bitset<16> flags;
+    uint16_t instantaneous_speed;
+    uint16_t average_speed;
+    uint16_t instantaneous_cadence;
+    uint16_t average_cadence;
+    uint32_t total_distance;
+    uint8_t resistance_level;
+    int16_t instantaneous_power;
+    int16_t average_power;
+    uint16_t total_energy;
+    uint16_t energy_per_hour;
+    uint8_t energy_per_minute;
+    uint8_t heart_rate;
+    uint8_t metabolic_equivalent;
+    uint16_t elapsed_time;
+    uint16_t remaining_time;
+
+    std::cout << "Received Byte Array: ";
+    for (const auto& byte : bytes) {
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
+    }
+    std::cout << std::endl;
+    flags = std::bitset<16>((bytes[1] << 8) | bytes[0]);
+    std::cout << "Flags: 0x" << std::hex << std::setfill('0') << std::setw(4) << flags.to_ulong() << std::dec << std::endl;
+    std::cout << "Flags (Binary): " << flags << std::endl;
 
     //Lecture des flags pour determiner quels champs sont presents
     //https://www.bluetooth.com/specifications/specs/fitness-machine-service-1-0/
-    bool more_data = (flags & 0x01) == 0x01;
-    bool average_speed_present = (flags & 0x02) == 0x02;
-    bool instantaneous_cadence_present = (flags & 0x04) == 0x04;
-    bool average_cadence_present = (flags & 0x08) == 0x08;
-    bool total_distance_present = (flags & 0x10) == 0x10;
-    bool resistance_level_present = (flags & 0x20) == 0x20;
-    bool instantaneous_power_present = (flags & 0x40) == 0x40;
-    bool average_power_present = (flags & 0x80) == 0x80;
 
-    std::cout << "More Data: " << (more_data ? "Yes" : "No") << std::endl;
-    std::cout << "Average Speed Present: " << (average_speed_present ? "Yes" : "No") << std::endl;
-    std::cout << "Cadence Present: " << (instantaneous_cadence_present ? "Yes" : "No") << std::endl;
-    std::cout << "Average Cadence Present: " << (average_cadence_present ? "Yes" : "No") << std::endl;
-    std::cout << "Total Distance Present: " << (total_distance_present ? "Yes" : "No") << std::endl;
-    std::cout << "Resistance Level Present: " << (resistance_level_present ? "Yes" : "No") << std::endl;
-    std::cout << "Power Present: " << (instantaneous_power_present ? "Yes" : "No") << std::endl;
-    std::cout << "Average Power Present: " << (average_power_present ? "Yes" : "No") << std::endl;
-
-     // Lecture du champ instantaneous power
-    if (instantaneous_power_present && bytes.size() >= 3) {
-        uint16_t instantaneous_power = (bytes[7] << 8) | bytes[6];
+    size_t offset = 2;
+    //Present if bit 0 of Flags field is set to 0
+    if (!flags.test(0)) {
+        instantaneous_speed = static_cast<uint16_t>(bytes[offset+1] << 8 | bytes[offset]);
+        std::cout << "Instantaneous Speed: " << instantaneous_speed / 100 << " kph" << std::endl;
+        offset += 2;
+    }
+    if (flags.test(1)) {
+        average_speed = bytes[offset + 1] << 8 | bytes[offset];
+        offset += 2;
+    }
+    if (flags.test(2)) {
+        instantaneous_cadence = static_cast<uint16_t>(bytes[offset + 1] << 8 | bytes[offset]);
+        std::cout << "Instantaneous Cadence: " << instantaneous_cadence/2 << " RPM" << std::endl;
+        offset += 2;
+    }
+    if (flags.test(6)) {
+        instantaneous_power = static_cast<int16_t>(bytes[offset + 1] << 8 | bytes[offset]);
         std::cout << "Instantaneous Power: " << instantaneous_power << " Watts" << std::endl;
-    }
-    else {
-        std::cout << "Instantaneous Power: Not Present" << std::endl;
-    }
 
+    }    
 
     std::cout << std::endl;
 }
