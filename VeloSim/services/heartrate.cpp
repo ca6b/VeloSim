@@ -15,11 +15,10 @@ void HeartRate::read_heart_rate_measurement(const SimpleBLE::ByteArray& bytes)
 
     std::cout << "Received Byte Array: ";
     for (const auto& byte : bytes) {
-        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte & 0xFF) << " ";
     }
-    std::cout << std::endl;
+    std::cout << std::dec << std::endl;
     flags = std::bitset<8>(bytes[0]);
-    std::cout << "Flags: 0x" << std::hex << std::setfill('0') << std::setw(2) << flags << std::dec << std::endl;
     std::cout << "Flags (Binary): " << flags << std::endl;
 
     //Lecture des champs selon les flags
@@ -28,13 +27,12 @@ void HeartRate::read_heart_rate_measurement(const SimpleBLE::ByteArray& bytes)
     size_t offset = 1;
     //Heart rate measurement resolution is 8 bits if bit_0 == 0 else 16 bits
     if (!flags.test(0)) {
-        heart_rate_measurement_8 = static_cast<uint8_t>(bytes[offset]);
-        std::cout << "HR_8: " << static_cast<int>(heart_rate_measurement_8) << " bpm" << std::endl;
-
+        memcpy(&heart_rate_measurement_8, &bytes[offset], sizeof(uint8_t));
+        std::cout << "HR_8: " << static_cast<int>(heart_rate_measurement_8 & 0xff) << " bpm" << std::endl;
         offset += 1;
     }
     else {
-        heart_rate_measurement_16 = static_cast<uint16_t>(bytes[offset + 1] << 8 | bytes[offset]);
+        memcpy(&heart_rate_measurement_16, &bytes[offset], sizeof(uint16_t));
         std::cout << "HR_16: " << heart_rate_measurement_16 << " bpm" << std::endl;
         offset += 2;
     }
@@ -44,17 +42,16 @@ void HeartRate::read_heart_rate_measurement(const SimpleBLE::ByteArray& bytes)
     }
 
     if (flags.test(2)) {
-        std::cout << "Sensor contact supported!" << std::endl;
+        std::cout << "Sensor contact supported." << std::endl;
     }
 
     if (flags.test(3)) {
-        energy_expended = static_cast<uint16_t>(bytes[offset + 1] << 8 | bytes[offset]);
+        memcpy(&energy_expended, &bytes[offset], sizeof(uint16_t));
         std::cout << "HR_16: " << energy_expended << " joule" << std::endl;
         offset += 2;
     }
-
     if (flags.test(4)) {
-        
+        std::cout << "RR-Interval Present." << std::endl;
     }
     //flags[5-7] reserved for future use
 

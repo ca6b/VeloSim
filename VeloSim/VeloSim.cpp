@@ -5,6 +5,7 @@
 #include "simpleble/SimpleBLE.h"
 #include <vector>
 #include <thread>
+#include <csignal>
 
 #include "utils/utils.hpp"
 #include "utils/uuids.hpp"
@@ -16,6 +17,14 @@ using namespace std::chrono_literals;
 
 //https://simpleble.readthedocs.io/en/latest/simpleble/tutorial.html
 //https://github.com/OpenBluetoothToolbox/SimpleBLE
+
+
+void signalHandler(int signal) {
+    if (signal == SIGINT) {
+        std::cout << "\nCtrl+C detected. Exiting program.\n";
+        exit(signal);
+    }
+}
 
 int main() {
     if (!SimpleBLE::Adapter::bluetooth_enabled()) {
@@ -90,8 +99,10 @@ int main() {
             HeartRate::read_heart_rate_measurement(bytes);
         });
 
-
-    std::this_thread::sleep_for(20s);
+    signal(SIGINT, signalHandler);
+    while (true) {
+        std::this_thread::sleep_for(20s);
+    }
 
     device.unsubscribe(uuids[service_selection.value()].first, uuids[service_selection.value()].second);
 
